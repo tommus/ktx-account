@@ -1,4 +1,4 @@
-package co.windly.ktxaccount.sample.kotlinsimple.application
+package co.windly.ktxaccount.sample.kotlindagger.application
 
 import android.content.Context
 import dagger.Module

@@ -1,6 +1,6 @@
-package co.windly.ktxaccount.sample.kotlinsimple.presentation
+package co.windly.ktxaccount.sample.kotlindagger.presentation
 
-import co.windly.ktxaccount.sample.kotlinsimple.presentation.main.MainModule
+import co.windly.ktxaccount.sample.kotlindagger.presentation.main.MainModule
 import dagger.Module
 import dagger.android.support.AndroidSupportInjectionModule
 

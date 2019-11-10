@@ -47,7 +47,7 @@ android {
   defaultConfig {
     minSdkVersion deps.build_versions.min_sdk
     targetSdkVersion deps.build_versions.target_sdk
-    applicationId "co.windly.ktxprefs.sample.kotlinsimple"
+    applicationId "co.windly.ktxprefs.sample.kotlindagger"
   }
 
   //endregion

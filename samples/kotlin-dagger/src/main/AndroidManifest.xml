@@ -3,12 +3,12 @@
 <manifest
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
-  package="co.windly.ktxaccount.sample.kotlinsimple">
+  package="co.windly.ktxaccount.sample.kotlindagger">
 
   <!-- region Application -->
 
   <application
-    android:name=".application.KotlinDagger"
+    android:name="co.windly.ktxaccount.sample.kotlindagger.application.KotlinDagger"
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
@@ -19,12 +19,27 @@
 
     <!-- region Activities -->
 
-    <activity android:name=".presentation.main.MainActivity">
+    <activity android:name="co.windly.ktxaccount.sample.kotlindagger.presentation.main.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+
+    <!-- endregion -->
+
+    <!-- region Services -->
+
+    <service
+      android:name="co.windly.ktxaccount.sample.kotlindagger.service.authentication.AccountAuthenticatorService"
+      tools:ignore="ExportedService">
+      <intent-filter>
+        <action android:name="android.accounts.AccountAuthenticator" />
+      </intent-filter>
+      <meta-data
+        android:name="android.accounts.AccountAuthenticator"
+        android:resource="@xml/account_authenticator" />
+    </service>
 
     <!-- endregion -->
 

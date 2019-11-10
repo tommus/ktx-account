@@ -1,4 +1,4 @@
-package co.windly.ktxaccount.sample.kotlinsimple.presentation.main
+package co.windly.ktxaccount.sample.kotlindagger.presentation.main
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

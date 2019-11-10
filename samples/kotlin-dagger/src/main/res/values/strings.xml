@@ -10,4 +10,10 @@
 
   <!-- endregion -->
 
+  <!-- region Authenticator -->
+
+  <string name="authenticator">co.windly.ktxaccount.sample.kotlindagger</string>
+
+  <!-- endregion -->
+
 </resources>

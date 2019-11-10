@@ -1,7 +1,6 @@
-package co.windly.ktxaccount.sample.kotlinsimple.application
+package co.windly.ktxaccount.sample.kotlindagger.application
 
-import co.windly.ktxaccount.sample.kotlinsimple.persistence.PersistenceModule
-import co.windly.ktxaccount.sample.kotlinsimple.presentation.PresentationModule
+import co.windly.ktxaccount.sample.kotlindagger.presentation.PresentationModule
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -10,7 +9,6 @@ import javax.inject.Singleton
 @Component(
   modules = [
     ApplicationModule::class,
-    PersistenceModule::class,
     PresentationModule::class
   ]
 )

@@ -1,4 +1,4 @@
-package co.windly.ktxaccount.sample.kotlinsimple.utility.account
+package co.windly.ktxaccount.sample.kotlindagger.utility.account
 
 import co.windly.ktxaccount.annotation.DefaultLong
 import co.windly.ktxaccount.annotation.DefaultString
