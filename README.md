@@ -5,7 +5,13 @@
 This library makes it simpler to use Account Manager to persist user-related data providing
 reactive interface.
 
-## Usage
+### Warning
+
+!!! This library does not work, yet. It's development had just started. !!!
+
+### Usage
+
+TODO:
 
 ### Add dependencies
 
