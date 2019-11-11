@@ -1,2 +1,15 @@
 <manifest
-  package="co.windly.ktxaccount.runtime"/>
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  package="co.windly.ktxaccount.runtime">
+
+  <!-- region Permissions -->
+
+  <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+  <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+  <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+
+  <!-- endregion -->
+
+</manifest>

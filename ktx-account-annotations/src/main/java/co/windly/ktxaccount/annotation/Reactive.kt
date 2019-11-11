@@ -26,10 +26,10 @@ annotation class Reactive(
   val value: Boolean = true,
 
   /**
-   * Changes if update of given preference should be emitted always or only if they were
+   * Changes if update of given property should be emitted always or only if they were
    * unique.
    *
-   * @return information when updates of given preference should be emitted.
+   * @return information when updates of given property should be emitted.
    */
   val distinctUntilChanged: Boolean = true
 )
