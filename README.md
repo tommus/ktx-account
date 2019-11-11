@@ -19,8 +19,8 @@ Add dependencies to the *Kotlin-based* project:
 
 ```groovy
 dependencies {
-    implementation "co.windly:ktx-account:0.0.1"
-    kapt "co.windly:ktx-account-compiler:0.0.1"
+    implementation "co.windly:ktx-account:0.1.0-SNAPSHOT"
+    kapt "co.windly:ktx-account-compiler:0.1.0-SNAPSHOT"
 }
 ```
 
