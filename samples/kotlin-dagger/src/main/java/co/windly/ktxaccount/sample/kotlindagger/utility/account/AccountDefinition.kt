@@ -1,10 +1,12 @@
 package co.windly.ktxaccount.sample.kotlindagger.utility.account
 
+import co.windly.ktxaccount.annotation.AccountScheme
 import co.windly.ktxaccount.annotation.DefaultLong
 import co.windly.ktxaccount.annotation.DefaultString
-import co.windly.ktxaccount.annotation.AccountScheme
+import co.windly.ktxaccount.annotation.Reactive
 
 @AccountScheme
+@Reactive(value = true)
 class AccountDefinition(
 
   //region Id
