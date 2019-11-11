@@ -1,12 +1,14 @@
 package co.windly.ktxaccount.sample.kotlindagger.utility.account
 
 import co.windly.ktxaccount.annotation.AccountScheme
+import co.windly.ktxaccount.annotation.DefaultBoolean
+import co.windly.ktxaccount.annotation.DefaultDouble
+import co.windly.ktxaccount.annotation.DefaultFloat
+import co.windly.ktxaccount.annotation.DefaultInt
 import co.windly.ktxaccount.annotation.DefaultLong
 import co.windly.ktxaccount.annotation.DefaultString
-import co.windly.ktxaccount.annotation.Reactive
 
 @AccountScheme
-@Reactive(value = true)
 class AccountDefinition(
 
   //region Id
@@ -26,6 +28,26 @@ class AccountDefinition(
 
   //endregion
 
+  //region Properties
+
+  @DefaultInt(value = 0)
+  internal val age: Int,
+
+  @DefaultFloat(value = 0.0f)
+  internal val height: Float,
+
+  //endregion
+
+  //region Location
+
+  @DefaultDouble(value = 0.0)
+  internal val latitude: Double,
+
+  @DefaultDouble(value = 0.0)
+  internal val longitude: Double,
+
+  //endregion
+
   //region Token
 
   @DefaultString(value = "")
@@ -35,7 +57,14 @@ class AccountDefinition(
   internal val refreshToken: String,
 
   @DefaultLong(value = 0L)
-  internal val expirationDate: Long
+  internal val expirationDate: Long,
+
+  //endregion
+
+  //region Miscellaneous
+
+  @DefaultBoolean(value = false)
+  internal val active: Boolean
 
   //endregion
 )

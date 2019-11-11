@@ -1,7 +1,7 @@
 package co.windly.ktxaccount.compiler
 
-import co.windly.ktxaccount.annotation.AccountScheme
 import co.windly.ktxaccount.annotation.DefaultBoolean
+import co.windly.ktxaccount.annotation.DefaultDouble
 import co.windly.ktxaccount.annotation.DefaultFloat
 import co.windly.ktxaccount.annotation.DefaultInt
 import co.windly.ktxaccount.annotation.DefaultLong
@@ -9,6 +9,7 @@ import co.windly.ktxaccount.annotation.DefaultString
 import co.windly.ktxaccount.annotation.Name
 import co.windly.ktxaccount.annotation.Reactive
 import co.windly.ktxaccount.compiler.PropertyType.BOOLEAN
+import co.windly.ktxaccount.compiler.PropertyType.DOUBLE
 import co.windly.ktxaccount.compiler.PropertyType.FLOAT
 import co.windly.ktxaccount.compiler.PropertyType.INTEGER
 import co.windly.ktxaccount.compiler.PropertyType.LONG
@@ -40,6 +41,7 @@ import javax.lang.model.util.ElementFilter
   value = [
     "co.windly.ktxaccount.annotation.AccountScheme",
     "co.windly.ktxaccount.annotation.DefaultBoolean",
+    "co.windly.ktxaccount.annotation.DefaultDouble",
     "co.windly.ktxaccount.annotation.DefaultFloat",
     "co.windly.ktxaccount.annotation.DefaultInt",
     "co.windly.ktxaccount.annotation.DefaultLong",
@@ -96,23 +98,23 @@ class SchemaProcessor : AbstractProcessor() {
         return true
       }
 
-    annotations.forEach { annotation ->
+    annotations.forEach annotations@{ annotation ->
 
       // Do nothing if incorrect annotated class has been passed to processor.
-      if (annotation.qualifiedName.contentEquals("co.windly.ktxaccount.annotation.AccountScheme")) {
-        return@forEach
+      if (!annotation.qualifiedName.contentEquals(
+          "co.windly.ktxaccount.annotation.AccountScheme")) {
+        return@annotations
       }
 
       // Iterate over all class elements.
       environment.getElementsAnnotatedWith(annotation).forEach { element ->
 
         // Retrieve a class meta information.
-        val classElement = element as TypeElement
-        val packageElement = classElement.enclosingElement as PackageElement
-        val classComment = processingEnv.elementUtils.getDocComment(classElement)
+        val packageElement = element.enclosingElement as PackageElement
+        val classComment = processingEnv.elementUtils.getDocComment(element)
 
         // Retrieve a class reactive meta information.
-        val classReactive = classElement.getAnnotation(Reactive::class.java)
+        val classReactive = element.getAnnotation(Reactive::class.java)
         val classEnableReactive = classReactive?.value ?: true
         val classDistinctUntilChanged = classReactive?.distinctUntilChanged ?: true
 
@@ -120,7 +122,7 @@ class SchemaProcessor : AbstractProcessor() {
         val descriptorList = mutableListOf<Property>()
 
         // Iterate over the fields of given class.
-        ElementFilter.fieldsIn(classElement.enclosedElements).forEach variable@{ variableElement ->
+        ElementFilter.fieldsIn(element.enclosedElements).forEach variable@{ variableElement ->
 
           // Ignore constants.
           if (variableElement.modifiers.contains(Modifier.STATIC)) {
@@ -177,13 +179,16 @@ class SchemaProcessor : AbstractProcessor() {
         // Prepare argument container.
         val arguments: MutableMap<String, Any?> = mutableMapOf()
 
+        // Prepare class-level reactive definition.
+        arguments["classEnableReactive"] = classEnableReactive
+
         // Prepare class basics arguments.
         arguments["package"] = packageElement.qualifiedName
         arguments["comment"] = classComment
 
         // Prepare generated names arguments.
-        arguments["schemeClassName"] = "${classElement.simpleName}${SuffixConfiguration.SCHEME}"
-        arguments["constantsClassName"] = "${classElement.simpleName}${SuffixConfiguration.CONSTANTS}"
+        arguments["schemeClassName"] = "${element.simpleName}${SuffixConfiguration.SCHEME}"
+        arguments["constantsClassName"] = "${element.simpleName}${SuffixConfiguration.CONSTANTS}"
 
         // Prepare descriptor list.
         arguments["descriptorList"] = descriptorList
@@ -196,11 +201,18 @@ class SchemaProcessor : AbstractProcessor() {
           .also { it.mkdirs() }
 
         // Create scheme.
-        // TODO:
+        File(packageDirectory,
+          "${element.simpleName}${SuffixConfiguration.SCHEME}.kt").apply {
+          writer(Charset.defaultCharset())
+            .use { writer ->
+              val template = freemarkerConfiguration.getTemplate(FreemarkerTemplate.SCHEME)
+              template.process(arguments, writer)
+            }
+        }
 
         // Create constants file that uses property arguments.
         File(packageDirectory,
-          "${classElement.simpleName}${SuffixConfiguration.CONSTANTS}.kt").apply {
+          "${element.simpleName}${SuffixConfiguration.CONSTANTS}.kt").apply {
           writer(Charset.defaultCharset())
             .use { writer ->
               val template = freemarkerConfiguration.getTemplate(FreemarkerTemplate.CONSTANTS)
@@ -247,6 +259,14 @@ class SchemaProcessor : AbstractProcessor() {
       return when (isAnnotationSupported(FLOAT, fieldType)) {
         false -> null
         true -> "${it.value}f"
+      }
+    }
+
+    // Parse for Double.
+    variableElement.getAnnotation(DefaultDouble::class.java)?.let {
+      return when (isAnnotationSupported(DOUBLE, fieldType)) {
+        false -> null
+        true -> "${it.value}"
       }
     }
 
@@ -308,7 +328,7 @@ class SchemaProcessor : AbstractProcessor() {
 
   private object FreemarkerTemplate {
 
-    const val SCHEMA = "schema.ftl"
+    const val SCHEME = "scheme.ftl"
 
     const val CONSTANTS = "constants.ftl"
   }

@@ -40,6 +40,13 @@ enum class PropertyType constructor(
     defaultValue = "false"
   ),
 
+  DOUBLE(
+    qualifiedName = Double::class.java.name,
+    simpleName = "Double",
+    methodName = "Double",
+    defaultValue = "0.0"
+  ),
+
   FLOAT(
     qualifiedName = Float::class.java.name,
     simpleName = "Float",
@@ -117,13 +124,6 @@ enum class PropertyType constructor(
         .stream(values())
         .anyMatch { it.qualifiedName == qualifiedName }
     }
-
-    val allowedTypes: String?
-      get() = Arrays
-        .stream(values())
-        .map { it.qualifiedName }
-        .reduce { first: String?, second: String? -> first + second }
-        .orElse(null)
 
     //endregion
   }
