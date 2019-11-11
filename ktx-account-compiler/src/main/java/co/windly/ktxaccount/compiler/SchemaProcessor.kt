@@ -17,7 +17,13 @@ import javax.lang.model.element.TypeElement
 
 @SupportedAnnotationTypes(
   value = [
-    "TODO"
+    "co.windly.ktxaccount.annotation.AccountScheme",
+    "co.windly.ktxaccount.annotation.DefaultBoolean",
+    "co.windly.ktxaccount.annotation.DefaultFloat",
+    "co.windly.ktxaccount.annotation.DefaultInt",
+    "co.windly.ktxaccount.annotation.DefaultLong",
+    "co.windly.ktxaccount.annotation.DefaultString",
+    "co.windly.ktxaccount.annotation.Reactive"
   ]
 )
 @SupportedOptions(value = [ProcessorConfiguration.OPTION_KAPT_KOTLIN])
