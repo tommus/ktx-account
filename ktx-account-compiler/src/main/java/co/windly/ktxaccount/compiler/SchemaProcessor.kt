@@ -1,5 +1,6 @@
 package co.windly.ktxaccount.compiler
 
+import co.windly.ktxaccount.annotation.Reactive
 import co.windly.ktxaccount.compiler.SchemaProcessor.FreemarkerConfiguration.BASE_PACKAGE_PATH
 import co.windly.ktxaccount.compiler.SchemaProcessor.FreemarkerConfiguration.MAJOR_VERSION
 import co.windly.ktxaccount.compiler.SchemaProcessor.FreemarkerConfiguration.MICRO_VERSION
@@ -13,6 +14,7 @@ import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedOptions
 import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion.RELEASE_8
+import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 
 @SupportedAnnotationTypes(
@@ -72,11 +74,25 @@ class SchemaProcessor : AbstractProcessor() {
     annotations.forEach { annotation ->
 
       // Do nothing if incorrect annotated class has been passed to processor.
-      if(annotation.qualifiedName.contentEquals("co.windly.ktxaccount.annotation.AccountScheme")) {
+      if (annotation.qualifiedName.contentEquals("co.windly.ktxaccount.annotation.AccountScheme")) {
         return@forEach
       }
 
-      // TODO:
+      // Iterate over all class elements.
+      environment.getElementsAnnotatedWith(annotation).forEach { element ->
+
+        // Retrieve a class meta information.
+        val classElement = element as TypeElement
+        val packageElement = classElement.enclosingElement as PackageElement
+        val classComment = processingEnv.elementUtils.getDocComment(classElement)
+
+        // Retrieve a class reactive meta information.
+        val classReactive = classElement.getAnnotation(Reactive::class.java)
+        val classEnableReactive = classReactive?.value ?: true
+        val classDistinctUntilChanged = classReactive?.distinctUntilChanged ?: true
+
+        // TODO:
+      }
     }
 
     // Print a message that annotation processor stopped.
