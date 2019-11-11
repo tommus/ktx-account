@@ -26,7 +26,7 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
     <#list descriptorList as descriptor>
     remove${descriptor.fieldName?cap_first}(name)
       <#if descriptor.enableReactive>
-      .also { ${descriptor.fieldName}Subject.onNext(DEFAULT_${descriptor.fieldNameUpperCase}) }
+      .also { retrieve${descriptor.fieldName?cap_first}Subject(name).onNext(DEFAULT_${descriptor.fieldNameUpperCase}) }
       </#if>
     </#list>
   }
@@ -39,13 +39,84 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
 
   </#if>
   //endregion
+
+  //region Account
+
+  override fun saveAccount(name: String): Completable {
+    return super.saveAccount(name)
+      .andThen(Completable.fromAction {
+        <#list descriptorList as descriptor>
+
+        // Initialize "${descriptor.propertyName}" property subject if not yet initialized.
+        if (${descriptor.fieldName}Subject == null) {
+          ${descriptor.fieldName}Subject = BehaviorSubject.createDefault(get${descriptor.fieldName?cap_first}(name))
+        }
+
+        // Otherwise emit persisted "${descriptor.propertyName}" property to already existing subject.
+        else {
+          ${descriptor.fieldName}Subject?.onNext(get${descriptor.fieldName?cap_first}(name))
+        }
+        </#list>
+      })
+  }
+
+  override fun saveAccount(name: String, password: String): Completable {
+    return super.saveAccount(name, password)
+      .andThen(Completable.fromAction {
+        <#list descriptorList as descriptor>
+
+        // Initialize "${descriptor.propertyName}" property subject if not yet initialized.
+        if (${descriptor.fieldName}Subject == null) {
+          ${descriptor.fieldName}Subject = BehaviorSubject.createDefault(get${descriptor.fieldName?cap_first}(name))
+        }
+
+        // Otherwise emit persisted "${descriptor.propertyName}" property to already existing subject.
+        else {
+          ${descriptor.fieldName}Subject?.onNext(get${descriptor.fieldName?cap_first}(name))
+        }
+        </#list>
+      })
+  }
+
+  override fun removeAccount(name: String): Completable {
+    return super.removeAccount(name)
+      .also {
+        <#list descriptorList as descriptor>
+
+        // Tear down "${descriptor.propertyName}" property subject.
+        if (${descriptor.fieldName}Subject != null) {
+          ${descriptor.fieldName}Subject = null
+        }
+        </#list>
+      }
+  }
+
+  //endregion
 <#list descriptorList as descriptor>
 
   //region ${descriptor.fieldName?cap_first}
   <#if descriptor.enableReactive>
 
-  protected val ${descriptor.fieldName}Subject: BehaviorSubject<${descriptor.type.simpleName}>
-    by lazy { BehaviorSubject.create<${descriptor.type.simpleName}>() }
+  protected var ${descriptor.fieldName}Subject: BehaviorSubject<${descriptor.type.simpleName}>? =
+    null
+
+  protected fun retrieve${descriptor.fieldName?cap_first}Subject(name: String): BehaviorSubject<${descriptor.type.simpleName}> {
+
+    // Retrieve nullable account.
+    val account = retrieveNullableAccount(name)
+
+    // Initialize subject if not initialized.
+    if (${descriptor.fieldName}Subject == null) {
+      if (account == null) {
+        ${descriptor.fieldName}Subject = BehaviorSubject.create()
+      } else {
+        ${descriptor.fieldName}Subject = BehaviorSubject.createDefault(get${descriptor.fieldName?cap_first}(name))
+      }
+    }
+
+    // Return initialized subject.
+    return requireNotNull(${descriptor.fieldName}Subject)
+  }
   </#if>
 
   <#if descriptor.comment??>
@@ -64,7 +135,7 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
     <#if descriptor.enableReactive>
 
     // Update subject.
-    ${descriptor.fieldName}Subject.onNext(${descriptor.fieldName})
+    retrieve${descriptor.fieldName?cap_first}Subject(name).onNext(${descriptor.fieldName})
     </#if>
   }
 
@@ -103,7 +174,7 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
     <#if descriptor.enableReactive>
 
     // Update subject.
-    ${descriptor.fieldName}Subject.onNext(DEFAULT_${descriptor.fieldNameUpperCase})
+    retrieve${descriptor.fieldName?cap_first}Subject(name).onNext(DEFAULT_${descriptor.fieldNameUpperCase})
     </#if>
   }
 
@@ -174,7 +245,7 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
    */
   </#if><#t>
   open fun observeRx${descriptor.fieldName?cap_first}(name: String): Flowable<${descriptor.type.simpleName}> =
-    ${descriptor.fieldName}Subject
+    retrieve${descriptor.fieldName?cap_first}Subject(name)
       .toFlowable(LATEST)
       <#if descriptor.distinctUntilChanged>
       .distinctUntilChanged()
