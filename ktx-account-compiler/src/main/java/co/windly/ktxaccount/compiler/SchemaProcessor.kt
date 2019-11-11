@@ -71,6 +71,11 @@ class SchemaProcessor : AbstractProcessor() {
 
     annotations.forEach { annotation ->
 
+      // Do nothing if incorrect annotated class has been passed to processor.
+      if(annotation.qualifiedName.contentEquals("co.windly.ktxaccount.annotation.AccountScheme")) {
+        return@forEach
+      }
+
       // TODO:
     }
 
