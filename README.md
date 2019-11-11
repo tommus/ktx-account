@@ -5,13 +5,7 @@
 This library makes it simpler to use Account Manager to persist user-related data providing
 reactive interface.
 
-### Warning
-
-!!! This library does not work, yet. It's development had just started. !!!
-
-### Usage
-
-TODO:
+## Usage
 
 ### Add dependencies
 
@@ -19,14 +13,154 @@ Add dependencies to the *Kotlin-based* project:
 
 ```groovy
 dependencies {
-    implementation "co.windly:ktx-account:0.1.0-SNAPSHOT"
-    kapt "co.windly:ktx-account-compiler:0.1.0-SNAPSHOT"
+    implementation "co.windly:ktx-account:1.0.0"
+    kapt "co.windly:ktx-account-compiler:1.0.0"
 }
 ```
 
-### Usage
+## Define schema
 
-TODO:
+Use the `@AccountSchema` annotation on any POJO. All (non static) fields will be considered an
+Account Manager property.
+
+Minimal example:
+
+```kotlin
+@AccountScheme
+class AccountDefinition(
+
+  //region Id
+
+  @DefaultLong(value = 0L)
+  internal val id: Long,
+
+  //endregion
+
+  //region Name
+
+  @DefaultString(value = "")
+  internal val firstName: String,
+
+  @DefaultString(value = "")
+  internal val lastName: String,
+
+  //endregion
+
+  //region Properties
+
+  @DefaultInt(value = 0)
+  internal val age: Int,
+
+  @DefaultFloat(value = 0.0f)
+  internal val height: Float,
+
+  //endregion
+
+  //region Location
+
+  @DefaultDouble(value = 0.0)
+  internal val latitude: Double,
+
+  @DefaultDouble(value = 0.0)
+  internal val longitude: Double,
+
+  //endregion
+
+  //region Token
+
+  @DefaultString(value = "")
+  internal val accessToken: String,
+
+  @DefaultString(value = "")
+  internal val refreshToken: String,
+
+  @DefaultLong(value = 0L)
+  internal val expirationDate: Long,
+
+  //endregion
+
+  //region Miscellaneous
+
+  @DefaultBoolean(value = false)
+  internal val active: Boolean
+
+  //endregion
+)
+```
+
+Accepted property field types are:
+
+ - Boolean
+ - Double
+ - Float
+ - Int
+ - Long
+ - String
+
+## Use generated scheme class
+
+A class named `<YourClassName>Scheme` will be generated in the same package (at compile time). Use it like this:
+
+```kotlin
+// Get access to scheme.
+val scheme = AccountDefinitionScheme(/* Context */ this)
+
+// Define account name.
+val name = "john.snow@winterfell.pl"
+
+// Create account.
+scheme
+  .saveAccount(name, "WinterIsComing")
+  .doOnComplete(onComplete)
+  .subscribe()
+  .addTo(disposables)
+    
+// Put a single value.
+scheme
+  .saveRxId(name, 1L)
+  .subscribe()
+  .addTo(disposables)
+  
+// Put several values in chained stream.
+Completable
+  .mergeArrayDelayError(
+    scheme.saveRxFirstName(name, "John"),
+    scheme.saveRxLastName(name, "Snow"),
+    scheme.saveRxAccessToken(name, "aaaaaaa (...)"),
+    scheme.saveRxRefreshToken(name, "bbbbbbb (...)"),
+    scheme.saveRxExpirationDate(name, 1573399868L)
+  )
+  .subscribe()
+  .addTo(disposables)
+
+// Access properties one by one.
+scheme
+  .getRxId(name)
+  .subscribe { id -> Log.d(TAG, "id -> $id.") }
+  .addTo(disposables)
+  
+// Clear all properties (mostly for testing purposes).
+scheme
+  .clearRx(name)
+  .subscribe()
+  .addTo(disposables)
+
+// Remove account.
+scheme
+  .removeAccount(name)
+  .subscribe { Log.d(TAG, "Account has been removed.") }
+  .addTo(disposables)
+```
+
+## Reactive Extensions
+
+Library supports generation of reactive methods (see sample above). You can disable this feature either by:
+
+- annotating class with `@Reactive(value = false)`,
+- annotating field with `@Reactive(value = false)`.
+
+All property changes are emitted to given stream using `distinctUntilChanged()` method. You can configure this
+behavior in `@Reactive` annotation (property `distinctUntilChanged`) for entire class or for each field separately.
 
 ## License
 

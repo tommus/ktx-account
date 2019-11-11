@@ -1,5 +1,5 @@
 ## Change Log
 
-### Kotlin AndroidX Account 0.0.1 *(Unspecified date)*
+### Kotlin AndroidX Account 1.0.0 *(2019-11-12)*
 
-  * Development start;
+  * Stable library release.
