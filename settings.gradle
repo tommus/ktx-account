@@ -9,6 +9,7 @@ include ":ktx-account-runtime"
 
 //region Samples
 
-// TODO:
+include ":kotlin-dagger"
+project(":kotlin-dagger").projectDir = new File(rootDir, "samples/kotlin-dagger")
 
 //endregion
