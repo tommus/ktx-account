@@ -1,5 +1,7 @@
 package co.windly.ktxaccount.compiler
 
+import co.windly.ktxaccount.annotation.AccountScheme
+import co.windly.ktxaccount.annotation.AccountScheme.Mode
 import co.windly.ktxaccount.annotation.DefaultBoolean
 import co.windly.ktxaccount.annotation.DefaultDouble
 import co.windly.ktxaccount.annotation.DefaultFloat
@@ -176,11 +178,27 @@ class SchemaProcessor : AbstractProcessor() {
           descriptorList += descriptor
         }
 
+        // Retrieve a class account scheme annotation.
+        val schemeAnnotation = element.getAnnotation(AccountScheme::class.java)
+        val schemaMode = schemeAnnotation.mode
+
+        // Validate schema mode.
+        if (schemaMode !in listOf(Mode.SINGLE, Mode.MULTIPLE)) {
+
+          // Print a message that incorrect schema mode has been selected.
+          processingEnv
+            .messager.noteMessage { "Incorrect schema mode has been selected." }
+
+          // Halt the annotation processor.
+          return true
+        }
+
         // Prepare argument container.
         val arguments: MutableMap<String, Any?> = mutableMapOf()
 
         // Prepare class-level reactive definition.
         arguments["classEnableReactive"] = classEnableReactive
+        arguments["schemaMode"] = schemaMode
 
         // Prepare class basics arguments.
         arguments["package"] = packageElement.qualifiedName

@@ -15,6 +15,12 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
 
+  //region Androidx
+
+  implementation deps.androidx.annotation
+
+  //endregion
+
   //region Kotlin
 
   implementation deps.kotlin.stdlib_jdk8
