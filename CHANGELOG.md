@@ -1,5 +1,9 @@
 ## Change Log
 
+### Kotlin AndroidX Account 1.1.1 *(2019-11-12)*
+
+  * Make `removeAccount()` method dependant on scheme mode.
+
 ### Kotlin AndroidX Account 1.1.0 *(2019-11-12)*
 
   * Add `mode` property to `AccountScheme`.
