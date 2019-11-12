@@ -1,6 +1,7 @@
 package co.windly.ktxaccount.sample.kotlindagger.utility.account
 
 import co.windly.ktxaccount.annotation.AccountScheme
+import co.windly.ktxaccount.annotation.AccountScheme.Mode
 import co.windly.ktxaccount.annotation.DefaultBoolean
 import co.windly.ktxaccount.annotation.DefaultDouble
 import co.windly.ktxaccount.annotation.DefaultFloat
@@ -8,7 +9,7 @@ import co.windly.ktxaccount.annotation.DefaultInt
 import co.windly.ktxaccount.annotation.DefaultLong
 import co.windly.ktxaccount.annotation.DefaultString
 
-@AccountScheme
+@AccountScheme(mode = Mode.SINGLE)
 class AccountDefinition(
 
   //region Id

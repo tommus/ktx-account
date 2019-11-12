@@ -5,7 +5,6 @@ import android.accounts.AccountManager
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import org.reactivestreams.Subscriber
 
 abstract class BaseAccountScheme(private val context: Context) {
 
@@ -74,34 +73,4 @@ abstract class BaseAccountScheme(private val context: Context) {
         manager.removeAccount(account, null, null)
       }
       .subscribeOn(Schedulers.io())
-
-  /**
-   * Retrieves an account associated with provided authenticator and identified by
-   * given name.
-   *
-   * @exception IllegalArgumentException when account identified by given name does
-   * not exist.
-   */
-  protected fun retrieveAccount(name: String): Account {
-
-    // Retrieve account or an exception if account does not exist.
-    return manager
-      .getAccountsByType(provideAuthenticator())
-      .firstOrNull { it.name == name }
-      ?: throw IllegalArgumentException("Account does not exist.")
-  }
-
-  /**
-   * Retrieves an account associated with provided authenticator and identified by
-   * given name or null if the before mentioned account does not exist.
-   */
-  protected fun retrieveNullableAccount(name: String): Account? {
-
-    // Retrieve account or an exception if account does not exist.
-    return manager
-      .getAccountsByType(provideAuthenticator())
-      .firstOrNull { it.name == name }
-  }
-
-  //endregion
 }

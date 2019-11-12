@@ -57,6 +57,9 @@ class MainActivity : Activity() {
   // Define account name (eg. based on email).
   val name = "john.snow@windly.co"
 
+  // Define account password.
+  val password = "WinterIsComing"
+
   @Inject
   lateinit var manager: AccountUtilityManager
 
@@ -64,7 +67,7 @@ class MainActivity : Activity() {
 
     // Create account.
     manager
-      .saveAccount(name, "WinterIsComing")
+      .saveAccount(name, password)
       .doOnComplete(onComplete)
       .subscribe()
       .addTo(disposables)
@@ -74,30 +77,30 @@ class MainActivity : Activity() {
 
     // Put a single value.
     manager
-      .saveRxId(name, 1L)
+      .saveRxId(1L)
       .subscribe()
       .addTo(disposables)
 
     // Put several values in chained stream.
     Completable
       .mergeArrayDelayError(
-        manager.saveRxFirstName(name, "John"),
-        manager.saveRxLastName(name, "Snow"),
-        manager.saveRxAccessToken(name, "aXcacaaa12ssas1231l14k"),
-        manager.saveRxRefreshToken(name, "bYdbdbbb23ttbt2342m25l"),
-        manager.saveRxExpirationDate(name, 1573399868L)
+        manager.saveRxFirstName("John"),
+        manager.saveRxLastName("Snow"),
+        manager.saveRxAccessToken("aXcacaaa12ssas1231l14k"),
+        manager.saveRxRefreshToken("bYdbdbbb23ttbt2342m25l"),
+        manager.saveRxExpirationDate(1573399868L)
       )
       .subscribe()
       .addTo(disposables)
 
     // Access properties one by one.
     manager
-      .getRxId(name)
+      .getRxId()
       .subscribe { id -> Log.d(TAG, "id -> $id.") }
       .addTo(disposables)
 
     manager
-      .getRxFirstName(name)
+      .getRxFirstName()
       .subscribe { firstName ->
         Log.d(
           TAG, "first name -> $firstName.")
@@ -105,7 +108,7 @@ class MainActivity : Activity() {
       .addTo(disposables)
 
     manager
-      .getRxLastName(name)
+      .getRxLastName()
       .subscribe { lastName ->
         Log.d(
           TAG, "last name -> $lastName.")
@@ -113,7 +116,7 @@ class MainActivity : Activity() {
       .addTo(disposables)
 
     manager
-      .getRxAccessToken(name)
+      .getRxAccessToken()
       .subscribe { accessToken ->
         Log.d(
           TAG, "access name -> $accessToken.")
@@ -121,7 +124,7 @@ class MainActivity : Activity() {
       .addTo(disposables)
 
     manager
-      .getRxRefreshToken(name)
+      .getRxRefreshToken()
       .subscribe { refreshToken ->
         Log.d(
           TAG, "refresh name -> $refreshToken.")
@@ -129,7 +132,7 @@ class MainActivity : Activity() {
       .addTo(disposables)
 
     manager
-      .getRxExpirationDate(name)
+      .getRxExpirationDate()
       .subscribe { expirationDate ->
         Log.d(
           TAG, "expiration date -> $expirationDate.")
@@ -138,21 +141,37 @@ class MainActivity : Activity() {
 
     // Remove a value.
     manager
-      .removeRxFirstName(name)
+      .removeRxFirstName()
       .subscribe()
       .addTo(disposables)
 
     // Clear all preferences.
     manager
-      .clearRx(name)
+      .clearRx()
       .subscribe()
       .addTo(disposables)
 
     // Remove account.
     manager
       .removeAccount(name)
-      .subscribe { Log.d(TAG, "Account has been removed.") }
+      .subscribe(
+        ::handleRemoveAccountSuccess,
+        ::handleRemoveAccountError
+      )
       .addTo(disposables)
+  }
+
+  private fun handleRemoveAccountSuccess() {
+
+    // Log the fact.
+    Log.v(TAG, "Successfully removed an account.")
+  }
+
+  private fun handleRemoveAccountError(throwable: Throwable) {
+
+    // Log an error.
+    Log.e(TAG, "An error occurred while removeing an account.")
+    Log.e(TAG, throwable.localizedMessage)
   }
 
   //endregion
@@ -163,7 +182,7 @@ class MainActivity : Activity() {
 
     // Subscribe to id changes.
     manager
-      .observeRxId(name)
+      .observeRxId()
       .subscribe(
         { handleObserveRxIdSuccess(it) },
         { handleObserveRxIdError(it) }
@@ -192,7 +211,7 @@ class MainActivity : Activity() {
 
     // Subscribe to first name changes.
     manager
-      .observeRxFirstName(name)
+      .observeRxFirstName()
       .subscribe(
         { handleObserveRxFirstNameSuccess(it) },
         { handleObserveRxFirstNameError(it) }
@@ -221,7 +240,7 @@ class MainActivity : Activity() {
 
     // Subscribe to last name changes.
     manager
-      .observeRxLastName(name)
+      .observeRxLastName()
       .subscribe(
         { handleObserveRxLastNameSuccess(it) },
         { handleObserveRxLastNameError(it) }
@@ -250,7 +269,7 @@ class MainActivity : Activity() {
 
     // Subscribe to access token changes.
     manager
-      .observeRxAccessToken(name)
+      .observeRxAccessToken()
       .subscribe(
         { handleObserveRxAccessTokenSuccess(it) },
         { handleObserveRxAccessTokenError(it) }
@@ -279,7 +298,7 @@ class MainActivity : Activity() {
 
     // Subscribe to refresh token changes.
     manager
-      .observeRxRefreshToken(name)
+      .observeRxRefreshToken()
       .subscribe(
         { handleObserveRxRefreshTokenSuccess(it) },
         { handleObserveRxRefreshTokenError(it) }
@@ -308,7 +327,7 @@ class MainActivity : Activity() {
 
     // Subscribe to expiration date changes.
     manager
-      .observeRxExpirationDate(name)
+      .observeRxExpirationDate()
       .subscribe(
         { handleObserveRxExpirationDateSuccess(it) },
         { handleObserveRxExpirationDateError(it) }
