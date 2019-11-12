@@ -55,22 +55,4 @@ abstract class BaseAccountScheme(private val context: Context) {
         manager.addAccountExplicitly(account, password, null)
       }
       .subscribeOn(Schedulers.io())
-
-  /**
-   * Removes account associated with given email.
-   */
-  open fun removeAccount(name: String): Completable =
-    Completable
-      .fromAction {
-
-        // Retrieve account.
-        val account = manager
-          .getAccountsByType(provideAuthenticator())
-          .first { it.name == name }
-
-        // Remove account.
-        @Suppress("DEPRECATION")
-        manager.removeAccount(account, null, null)
-      }
-      .subscribeOn(Schedulers.io())
 }

@@ -78,9 +78,9 @@ abstract class ${schemeClassName}(context: Context) :
     </#list>
   }
 
-  override fun removeAccount(name: String): Completable =
+  override fun removeAccount(<#if schemaMode == "multiple">name: String</#if>): Completable =
     super
-      .removeAccount(name)
+      .removeAccount(<#if schemaMode == "multiple">name</#if>)
       .andThen(clearSubjects())
 
   private fun clearSubjects(): Completable =
