@@ -3,8 +3,8 @@ package ${package};
 import android.content.Context
 import co.windly.ktxaccount.runtime.scheme.BaseAccountScheme
 <#list descriptorList as descriptor>
-import co.windly.ktxaccount.sample.kotlindagger.utility.account.AccountDefinitionConstants.Companion.DEFAULT_${descriptor.fieldNameUpperCase}
-import co.windly.ktxaccount.sample.kotlindagger.utility.account.AccountDefinitionConstants.Companion.KEY_${descriptor.fieldNameUpperCase}
+import ${package}.AccountDefinitionConstants.Companion.DEFAULT_${descriptor.fieldNameUpperCase}
+import ${package}.AccountDefinitionConstants.Companion.KEY_${descriptor.fieldNameUpperCase}
 </#list>
 import io.reactivex.BackpressureStrategy.LATEST
 import io.reactivex.Completable
@@ -24,9 +24,13 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
 
   open fun clear(name: String) {
     <#list descriptorList as descriptor>
+
+    // Clear value under "${descriptor.propertyName}" property and emit default value to it's subject.
     remove${descriptor.fieldName?cap_first}(name)
-      <#if descriptor.enableReactive>
-      .also { retrieve${descriptor.fieldName?cap_first}Subject(name).onNext(DEFAULT_${descriptor.fieldNameUpperCase}) }
+      <#if descriptor.enableReactive>.also {
+        retrieve${descriptor.fieldName?cap_first}Subject(name)
+          .onNext(DEFAULT_${descriptor.fieldNameUpperCase})
+      }
       </#if>
     </#list>
   }
@@ -42,45 +46,39 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
 
   //region Account
 
-  override fun saveAccount(name: String): Completable {
-    return super.saveAccount(name)
-      .andThen(Completable.fromAction {
-        <#list descriptorList as descriptor>
+  override fun saveAccount(name: String): Completable =
+    super
+      .saveAccount(name)
+      .andThen(initializeSubjects(name))
 
-        // Initialize "${descriptor.propertyName}" property subject if not yet initialized.
-        if (${descriptor.fieldName}Subject == null) {
-          ${descriptor.fieldName}Subject = BehaviorSubject.createDefault(get${descriptor.fieldName?cap_first}(name))
-        }
+  override fun saveAccount(name: String, password: String): Completable =
+    super
+      .saveAccount(name, password)
+      .andThen(initializeSubjects(name))
 
-        // Otherwise emit persisted "${descriptor.propertyName}" property to already existing subject.
-        else {
-          ${descriptor.fieldName}Subject?.onNext(get${descriptor.fieldName?cap_first}(name))
-        }
-        </#list>
-      })
+  private fun initializeSubjects(name: String): Completable = Completable.fromAction {
+    <#list descriptorList as descriptor>
+
+    // Initialize "${descriptor.propertyName}" property subject if not yet initialized.
+    if (${descriptor.fieldName}Subject == null) {
+      ${descriptor.fieldName}Subject = BehaviorSubject.createDefault(get${descriptor.fieldName?cap_first}(name))
+    }
+
+    // Otherwise emit persisted "${descriptor.propertyName}" property to already existing subject.
+    else {
+      ${descriptor.fieldName}Subject?.onNext(get${descriptor.fieldName?cap_first}(name))
+    }
+    </#list>
   }
 
-  override fun saveAccount(name: String, password: String): Completable {
-    return super.saveAccount(name, password)
-      .andThen(Completable.fromAction {
-        <#list descriptorList as descriptor>
+  override fun removeAccount(name: String): Completable =
+    super
+      .removeAccount(name)
+      .andThen(clearSubjects())
 
-        // Initialize "${descriptor.propertyName}" property subject if not yet initialized.
-        if (${descriptor.fieldName}Subject == null) {
-          ${descriptor.fieldName}Subject = BehaviorSubject.createDefault(get${descriptor.fieldName?cap_first}(name))
-        }
-
-        // Otherwise emit persisted "${descriptor.propertyName}" property to already existing subject.
-        else {
-          ${descriptor.fieldName}Subject?.onNext(get${descriptor.fieldName?cap_first}(name))
-        }
-        </#list>
-      })
-  }
-
-  override fun removeAccount(name: String): Completable {
-    return super.removeAccount(name)
-      .also {
+  private fun clearSubjects(): Completable =
+    Completable
+      .fromAction {
         <#list descriptorList as descriptor>
 
         // Tear down "${descriptor.propertyName}" property subject.
@@ -89,7 +87,6 @@ abstract class ${schemeClassName}(context: Context) : BaseAccountScheme(context)
         }
         </#list>
       }
-  }
 
   //endregion
 <#list descriptorList as descriptor>
