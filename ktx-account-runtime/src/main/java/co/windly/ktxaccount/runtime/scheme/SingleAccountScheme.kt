@@ -72,7 +72,9 @@ abstract class SingleAccountScheme(context: Context) : BaseAccountScheme(context
       .fromAction {
 
         // Clears all accounts associated with this authenticator.
-        manager.accounts.forEach {
+        manager
+          .getAccountsByType(provideAuthenticator())
+          .forEach {
 
           @Suppress("DEPRECATION")
           manager.removeAccount(it, null, null)

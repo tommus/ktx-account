@@ -1,5 +1,9 @@
 ## Change Log
 
+### Kotlin AndroidX Account 1.1.2 *(2019-12-04)*
+
+  * Fix single account scheme to remove only authenticator accounts.
+
 ### Kotlin AndroidX Account 1.1.1 *(2019-11-12)*
 
   * Make `removeAccount()` method dependant on scheme mode.
