@@ -44,9 +44,11 @@ abstract class ${schemeClassName}(context: Context) :
 
   <#if classEnableReactive>
   open fun clearRx(<#if schemaMode == "multiple">name: String</#if>): Completable =
-    Completable
-      .fromAction { clear(<#if schemaMode == "multiple">name</#if>) }
-      .subscribeOn(Schedulers.io())
+    Completable.defer {
+      Completable
+        .fromAction { clear(<#if schemaMode == "multiple">name</#if>) }
+    }
+    .subscribeOn(Schedulers.io())
 
   </#if>
   //endregion
@@ -84,16 +86,18 @@ abstract class ${schemeClassName}(context: Context) :
       .andThen(clearSubjects())
 
   private fun clearSubjects(): Completable =
-    Completable
-      .fromAction {
-        <#list descriptorList as descriptor>
+    Completable.defer {
+      Completable
+        .fromAction {
+          <#list descriptorList as descriptor>
 
-        // Tear down "${descriptor.propertyName}" property subject.
-        if (${descriptor.fieldName}Subject != null) {
-          ${descriptor.fieldName}Subject = null
+          // Tear down "${descriptor.propertyName}" property subject.
+          if (${descriptor.fieldName}Subject != null) {
+            ${descriptor.fieldName}Subject = null
+          }
+          </#list>
         }
-        </#list>
-      }
+    }
 
   //endregion
 <#list descriptorList as descriptor>
@@ -189,9 +193,11 @@ abstract class ${schemeClassName}(context: Context) :
    */
   </#if><#t>
   open fun saveRx${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name: String, </#if>${descriptor.fieldName}: ${descriptor.type.simpleName}): Completable =
-    Completable
-      .fromAction { save${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name, </#if>${descriptor.fieldName}) }
-      .subscribeOn(Schedulers.io())
+    Completable.defer {
+      Completable
+        .fromAction { save${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name, </#if>${descriptor.fieldName}) }
+    }
+    .subscribeOn(Schedulers.io())
 
   </#if>
   <#if descriptor.enableReactive>
@@ -201,32 +207,34 @@ abstract class ${schemeClassName}(context: Context) :
    */
   </#if><#t>
   open fun getRx${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name: String</#if>): Single<${descriptor.type.simpleName}> =
-    Single
-      .fromPublisher<${descriptor.type.simpleName}> {
+    Single.defer<${descriptor.type.simpleName}> {
+      Single
+        .fromPublisher<${descriptor.type.simpleName}> {
 
-        // Retrieve account.
-        val account = retrieveNullableAccount(<#if schemaMode == "multiple">name</#if>)
+          // Retrieve account.
+          val account = retrieveNullableAccount(<#if schemaMode == "multiple">name</#if>)
 
-        // Emit an error for non-existent account.
-        if (account == null) {
-          it.onError(NoSuchElementException("Account does not exist."))
+          // Emit an error for non-existent account.
+          if (account == null) {
+            it.onError(NoSuchElementException("Account does not exist."))
+            it.onComplete()
+            return@fromPublisher
+          }
+
+          // Retrieve property.
+          val property = manager.getUserData(account, KEY_${descriptor.fieldNameUpperCase})
+
+          // Complete with default value if property does not exist.
+          if (property.isNullOrBlank()) {
+            it.onNext(DEFAULT_${descriptor.fieldNameUpperCase})
+            it.onComplete()
+            return@fromPublisher
+          }
+
+          // Emit property.
+          it.onNext(property.to${descriptor.type.simpleName}())
           it.onComplete()
-          return@fromPublisher
         }
-
-        // Retrieve property.
-        val property = manager.getUserData(account, KEY_${descriptor.fieldNameUpperCase})
-
-        // Complete with default value if property does not exist.
-        if (property.isNullOrBlank()) {
-          it.onNext(DEFAULT_${descriptor.fieldNameUpperCase})
-          it.onComplete()
-          return@fromPublisher
-        }
-
-        // Emit property.
-        it.onNext(property.to${descriptor.type.simpleName}())
-        it.onComplete()
       }
       .subscribeOn(Schedulers.io())
 
@@ -238,8 +246,11 @@ abstract class ${schemeClassName}(context: Context) :
    */
   </#if><#t>
   open fun removeRx${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name: String</#if>): Completable =
-    Completable
-      .fromAction { remove${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name</#if>) }
+    Completable.defer {
+      Completable
+        .fromAction { remove${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name</#if>) }
+    }
+    .subscribeOn(Schedulers.io())
 
   </#if>
   <#if descriptor.enableReactive>
@@ -249,11 +260,14 @@ abstract class ${schemeClassName}(context: Context) :
    */
   </#if><#t>
   open fun observeRx${descriptor.fieldName?cap_first}(<#if schemaMode == "multiple">name: String</#if>): Flowable<${descriptor.type.simpleName}> =
+    Flowable.defer<${descriptor.type.simpleName}> {
     retrieve${descriptor.fieldName?cap_first}Subject(<#if schemaMode == "multiple">name</#if>)
       .toFlowable(LATEST)
       <#if descriptor.distinctUntilChanged>
       .distinctUntilChanged()
       </#if>
+    }
+    .subscribeOn(Schedulers.io())
 
   </#if>
   //endregion
