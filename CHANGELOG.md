@@ -1,5 +1,9 @@
 ## Change Log
 
+### Kotlin AndroidX Account 1.1.3 *(2020-02-07)*
+
+  * Migrate schema to support deferred streams.
+
 ### Kotlin AndroidX Account 1.1.2 *(2019-12-04)*
 
   * Fix single account scheme to remove only authenticator accounts.
