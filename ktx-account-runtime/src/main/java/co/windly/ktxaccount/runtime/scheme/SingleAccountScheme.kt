@@ -3,6 +3,7 @@ package co.windly.ktxaccount.runtime.scheme
 import android.accounts.Account
 import android.content.Context
 import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 
 /**
  * This scheme assumes ONE and ONLY account for given authenticator will ever exist.
@@ -27,6 +28,12 @@ abstract class SingleAccountScheme(context: Context) : BaseAccountScheme(context
   override fun saveAccount(name: String, password: String): Completable =
     clearExistingAccounts()
       .andThen(super.saveAccount(name, password))
+
+  /**
+   * Removes account associated with given email.
+   */
+  open fun removeAccount(): Completable =
+    clearExistingAccounts()
 
   /**
    * Retrieves an account associated with provided authenticator and identified by
@@ -65,12 +72,15 @@ abstract class SingleAccountScheme(context: Context) : BaseAccountScheme(context
       .fromAction {
 
         // Clears all accounts associated with this authenticator.
-        manager.accounts.forEach {
+        manager
+          .getAccountsByType(provideAuthenticator())
+          .forEach {
 
           @Suppress("DEPRECATION")
           manager.removeAccount(it, null, null)
         }
       }
+      .subscribeOn(Schedulers.io())
 
   //endregion
 }

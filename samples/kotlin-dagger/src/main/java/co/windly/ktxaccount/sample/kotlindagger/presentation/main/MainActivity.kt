@@ -153,7 +153,7 @@ class MainActivity : Activity() {
 
     // Remove account.
     manager
-      .removeAccount(name)
+      .removeAccount()
       .subscribe(
         ::handleRemoveAccountSuccess,
         ::handleRemoveAccountError

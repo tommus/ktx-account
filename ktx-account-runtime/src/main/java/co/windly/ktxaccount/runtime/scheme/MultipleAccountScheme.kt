@@ -2,6 +2,8 @@ package co.windly.ktxaccount.runtime.scheme
 
 import android.accounts.Account
 import android.content.Context
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 
 /**
  * This scheme assumes MULTIPLE accounts for given authenticator can exist.
@@ -40,6 +42,24 @@ abstract class MultipleAccountScheme(context: Context) : BaseAccountScheme(conte
       .getAccountsByType(provideAuthenticator())
       .firstOrNull { it.name == name }
   }
+
+  /**
+   * Removes account associated with given email.
+   */
+  open fun removeAccount(name: String): Completable =
+    Completable
+      .fromAction {
+
+        // Retrieve account.
+        val account = manager
+          .getAccountsByType(provideAuthenticator())
+          .first { it.name == name }
+
+        // Remove account.
+        @Suppress("DEPRECATION")
+        manager.removeAccount(account, null, null)
+      }
+      .subscribeOn(Schedulers.io())
 
   //endregion
 }
