@@ -8,8 +8,8 @@ import co.windly.ktxaccount.runtime.scheme.MultipleAccountScheme
 import co.windly.ktxaccount.runtime.scheme.SingleAccountScheme
 </#if>
 <#list descriptorList as descriptor>
-import ${package}.AccountDefinitionConstants.Companion.DEFAULT_${descriptor.fieldNameUpperCase}
-import ${package}.AccountDefinitionConstants.Companion.KEY_${descriptor.fieldNameUpperCase}
+import ${package}.${constantsClassName}.Companion.DEFAULT_${descriptor.fieldNameUpperCase}
+import ${package}.${constantsClassName}.Companion.KEY_${descriptor.fieldNameUpperCase}
 </#list>
 import io.reactivex.BackpressureStrategy.LATEST
 import io.reactivex.Completable
