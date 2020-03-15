@@ -10,7 +10,7 @@ import co.windly.ktxaccount.annotation.DefaultLong
 import co.windly.ktxaccount.annotation.DefaultString
 
 @AccountScheme(mode = Mode.SINGLE)
-class AccountDefinition(
+class User(
 
   //region Id
 
