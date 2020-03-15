@@ -1,5 +1,10 @@
 ## Change Log
 
+### Kotlin AndroidX Account 1.1.4 *(2020-04-15)*
+
+  * Decrease minimum SDK to Android API level 16.
+  * Fix constants file generation.
+
 ### Kotlin AndroidX Account 1.1.3 *(2020-02-07)*
 
   * Migrate schema to support deferred streams.
