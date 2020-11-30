@@ -1,6 +1,7 @@
 package co.windly.ktxaccount.sample.kotlindagger.application
 
 import android.app.Application
+import co.windly.ktxaccount.sample.kotlindagger.service.authentication.AccountAuthenticator
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -31,6 +32,9 @@ class KotlinDagger : Application(), ApplicationComponent.ComponentProvider, HasA
 
     // Initialize dependency graph.
     initializeDependencyInjection()
+
+    // Register Account listener
+    registerAccountListener()
   }
 
   //endregion
@@ -47,4 +51,13 @@ class KotlinDagger : Application(), ApplicationComponent.ComponentProvider, HasA
   }
 
   //endregion
+
+  //region Account
+
+  val accountAuthenticator = AccountAuthenticator(this)
+
+  private fun registerAccountListener() = accountAuthenticator.registerListener()
+
+  //endregion
+
 }

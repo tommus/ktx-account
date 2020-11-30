@@ -3,8 +3,10 @@ package co.windly.ktxaccount.sample.kotlindagger.presentation.main
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
+import co.windly.ktxaccount.sample.kotlindagger.R
 import co.windly.ktxaccount.sample.kotlindagger.R.layout
 import co.windly.ktxaccount.sample.kotlindagger.utility.manager.AccountUtilityManager
+import com.google.android.material.button.MaterialButton
 import dagger.android.AndroidInjection
 import io.reactivex.Completable
 import io.reactivex.disposables.CompositeDisposable
@@ -38,16 +40,44 @@ class MainActivity : Activity() {
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_main)
 
+    // Observe clicks
+    idealiseClickListeners()
+
     // Subscribe to changes.
+    observeAccountExistence()
     observeId()
     observeFirstName()
     observeLastName()
     observeAccessToken()
     observeRefreshToken()
     observeExpirationDate()
+  }
 
-    // Initialize account.
-    createAccount { fillAccountDetails() }
+  //endregion
+
+  //region Click
+
+  private fun idealiseClickListeners() {
+
+    // Create button
+    findViewById<MaterialButton>(R.id.createButton).setOnClickListener {
+
+      // Initialize account.
+      createAccount { fillAccountDetails() }
+    }
+
+    // Remove account
+    findViewById<MaterialButton>(R.id.removeButton).setOnClickListener {
+
+    // Remove account.
+    manager
+      .removeAccount()
+      .subscribe(
+        ::handleRemoveAccountSuccess,
+        ::handleRemoveAccountError
+      )
+      .addTo(disposables)
+    }
   }
 
   //endregion
@@ -93,72 +123,65 @@ class MainActivity : Activity() {
       .subscribe()
       .addTo(disposables)
 
-    // Access properties one by one.
-    manager
-      .getRxId()
-      .subscribe { id -> Log.d(TAG, "id -> $id.") }
-      .addTo(disposables)
+//    // Access properties one by one.
+//    manager
+//      .getRxId()
+//      .subscribe { id -> Log.d(TAG, "id -> $id.") }
+//      .addTo(disposables)
+//
+//    manager
+//      .getRxFirstName()
+//      .subscribe { firstName ->
+//        Log.d(
+//          TAG, "first name -> $firstName.")
+//      }
+//      .addTo(disposables)
+//
+//    manager
+//      .getRxLastName()
+//      .subscribe { lastName ->
+//        Log.d(
+//          TAG, "last name -> $lastName.")
+//      }
+//      .addTo(disposables)
+//
+//    manager
+//      .getRxAccessToken()
+//      .subscribe { accessToken ->
+//        Log.d(
+//          TAG, "access name -> $accessToken.")
+//      }
+//      .addTo(disposables)
+//
+//    manager
+//      .getRxRefreshToken()
+//      .subscribe { refreshToken ->
+//        Log.d(
+//          TAG, "refresh name -> $refreshToken.")
+//      }
+//      .addTo(disposables)
+//
+//    manager
+//      .getRxExpirationDate()
+//      .subscribe { expirationDate ->
+//        Log.d(
+//          TAG, "expiration date -> $expirationDate.")
+//      }
+//      .addTo(disposables)
+//
+//    // Remove a value.
+//    manager
+//      .removeRxFirstName()
+//      .subscribe()
+//      .addTo(disposables)
+//
+//    // Clear all preferences.
+//    manager
+//      .clearRx()
+//      .subscribe()
+//      .addTo(disposables)
+//
 
-    manager
-      .getRxFirstName()
-      .subscribe { firstName ->
-        Log.d(
-          TAG, "first name -> $firstName.")
-      }
-      .addTo(disposables)
-
-    manager
-      .getRxLastName()
-      .subscribe { lastName ->
-        Log.d(
-          TAG, "last name -> $lastName.")
-      }
-      .addTo(disposables)
-
-    manager
-      .getRxAccessToken()
-      .subscribe { accessToken ->
-        Log.d(
-          TAG, "access name -> $accessToken.")
-      }
-      .addTo(disposables)
-
-    manager
-      .getRxRefreshToken()
-      .subscribe { refreshToken ->
-        Log.d(
-          TAG, "refresh name -> $refreshToken.")
-      }
-      .addTo(disposables)
-
-    manager
-      .getRxExpirationDate()
-      .subscribe { expirationDate ->
-        Log.d(
-          TAG, "expiration date -> $expirationDate.")
-      }
-      .addTo(disposables)
-
-    // Remove a value.
-    manager
-      .removeRxFirstName()
-      .subscribe()
-      .addTo(disposables)
-
-    // Clear all preferences.
-    manager
-      .clearRx()
-      .subscribe()
-      .addTo(disposables)
-
-    // Remove account.
-    manager
-      .removeAccount()
-      .subscribe(
-        ::handleRemoveAccountSuccess,
-        ::handleRemoveAccountError
-      )
-      .addTo(disposables)
   }
 
   private fun handleRemoveAccountSuccess() {
@@ -171,6 +194,34 @@ class MainActivity : Activity() {
 
     // Log an error.
     Log.e(TAG, "An error occurred while removeing an account.")
+    Log.e(TAG, throwable.localizedMessage)
+  }
+
+  //endregion
+
+  //region Observe Account existence
+
+  private fun observeAccountExistence() {
+
+    // Subscribe to account existence stream
+    manager.observeAccountExistence
+      .subscribe(
+        { handleAccountExistenceSuccess(it) },
+        { handleAccountExistenceError(it) }
+      )
+      .addTo(disposables)
+  }
+
+  private fun handleAccountExistenceSuccess(existence: Boolean) {
+
+    // Log the fact.
+    Log.d(TAG, "AccountExistence changed: $existence.")
+  }
+
+  private fun handleAccountExistenceError(throwable: Throwable) {
+
+    // Log an error.
+    Log.e(TAG, "An error occurred while observing account existence.")
     Log.e(TAG, throwable.localizedMessage)
   }
 

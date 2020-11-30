@@ -4,13 +4,26 @@ import android.accounts.AbstractAccountAuthenticator
 import android.accounts.Account
 import android.accounts.AccountAuthenticatorResponse
 import android.accounts.AccountManager
+import android.accounts.OnAccountsUpdateListener
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import io.reactivex.subjects.BehaviorSubject
 
 abstract class SimpleAccountAuthenticator(private val context: Context) :
   AbstractAccountAuthenticator(context) {
+
+  //region Companion object
+
+  companion object {
+
+    // Stream with current available accounts
+    val availableAccounts : BehaviorSubject<List<Account>> = BehaviorSubject.create<List<Account>>()
+
+  }
+
+  //endregion
 
   //region Authenticator
 
@@ -27,7 +40,28 @@ abstract class SimpleAccountAuthenticator(private val context: Context) :
   //region Account Manager
 
   private val manager: AccountManager
-    by lazy { AccountManager.get(context) }
+    by lazy {
+      AccountManager.get(context)
+    }
+
+  //endregion
+
+  //region Account listener
+
+  private val accountListener: OnAccountsUpdateListener =  OnAccountsUpdateListener { accounts ->
+
+    // Push available account to stream
+    availableAccounts.onNext(accounts.toList())
+
+  }
+
+  fun registerListener() {
+    manager.addOnAccountsUpdatedListener(accountListener, null, true)
+  }
+
+  fun releaseListener() {
+    manager.removeOnAccountsUpdatedListener(accountListener)
+  }
 
   //endregion
 
@@ -84,4 +118,5 @@ abstract class SimpleAccountAuthenticator(private val context: Context) :
     Bundle().apply { putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false) }
 
   //endregion
+
 }

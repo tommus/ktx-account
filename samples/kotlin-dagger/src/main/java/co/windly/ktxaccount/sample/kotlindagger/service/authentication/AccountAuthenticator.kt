@@ -20,4 +20,5 @@ class AccountAuthenticator(context: Context) : SimpleAccountAuthenticator(contex
     MainActivity::class.java
 
   //endregion
+
 }
