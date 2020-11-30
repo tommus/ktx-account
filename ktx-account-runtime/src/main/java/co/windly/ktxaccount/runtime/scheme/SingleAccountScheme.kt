@@ -1,9 +1,11 @@
 package co.windly.ktxaccount.runtime.scheme
 
 import android.accounts.Account
+import android.accounts.AccountManagerFuture
 import android.content.Context
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.FutureTask
 
 /**
  * This scheme assumes ONE and ONLY account for given authenticator will ever exist.
@@ -76,9 +78,12 @@ abstract class SingleAccountScheme(context: Context) : BaseAccountScheme(context
           .getAccountsByType(provideAuthenticator())
           .forEach {
 
-          @Suppress("DEPRECATION")
-          manager.removeAccount(it, null, null)
-        }
+            @Suppress("DEPRECATION")
+            val task: AccountManagerFuture<Boolean> = manager.removeAccount(it, null, null)
+
+            // Wait on result to prevent deleting just created account
+            (task as FutureTask<Boolean>).get()
+          }
       }
       .subscribeOn(Schedulers.io())
 
