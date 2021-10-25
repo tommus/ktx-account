@@ -2,8 +2,8 @@ package co.windly.ktxaccount.runtime.scheme
 
 import android.accounts.Account
 import android.content.Context
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 /**
  * This scheme assumes MULTIPLE accounts for given authenticator can exist.
