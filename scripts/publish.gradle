@@ -1,8 +1,6 @@
-plugins {
-  id 'maven-publish'
-  id 'signing'
-  id 'org.jetbrains.dokka'
-}
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply plugin: 'org.jetbrains.dokka'
 
 version = VERSION_NAME
 group = GROUP
@@ -112,7 +110,7 @@ task javadocJar(type: Jar, dependsOn: dokkaJavadoc) {
  * - hides all the inherited members. */
 tasks.withType(dokkaHtmlPartial.getClass()).configureEach {
   pluginsMapConfiguration.
-    set(['org.jetbrains.dokka.base.DokkaBase': '""{ "separateInheritedMembers": true}""'])
+      set(['org.jetbrains.dokka.base.DokkaBase': """{ "separateInheritedMembers": true}"""])
 }
 
 /**
@@ -130,7 +128,7 @@ private boolean isReleaseBuild() {
  * - hardcoded value to Maven Central release repository otherwise. */
 private String releaseRepoUrl() {
   return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL :
-    'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+      'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
 }
 
 /**
@@ -142,7 +140,7 @@ private String releaseRepoUrl() {
  * - hardcoded value to Maven Central snapshot repository otherwise. */
 private String snapshotRepoUrl() {
   return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL :
-    'https://oss.sonatype.org/content/repositories/snapshots/'
+      'https://oss.sonatype.org/content/repositories/snapshots/'
 }
 
 /**

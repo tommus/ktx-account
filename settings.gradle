@@ -2,6 +2,3 @@ include ':ktx-account'
 include ':ktx-account-annotations'
 include ':ktx-account-compiler'
 include ':ktx-account-runtime'
-
-include ':kotlin-dagger'
-project(':kotlin-dagger').projectDir = new File(rootDir, 'samples/kotlin-dagger')

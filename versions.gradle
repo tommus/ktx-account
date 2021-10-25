@@ -36,7 +36,6 @@ deps.build = build
 def build_versions = [:]
 build_versions.compile_sdk = 31
 build_versions.min_sdk = 16
-build_versions.target_sdk = 31
 deps.build_versions = build_versions
 
 def dagger = [:]
