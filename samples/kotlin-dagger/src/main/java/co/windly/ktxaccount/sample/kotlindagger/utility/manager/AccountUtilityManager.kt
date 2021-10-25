@@ -2,8 +2,8 @@ package co.windly.ktxaccount.sample.kotlindagger.utility.manager
 
 import android.content.Context
 import co.windly.ktxaccount.sample.kotlindagger.utility.account.UserScheme
-import io.reactivex.annotations.SchedulerSupport
-import io.reactivex.annotations.SchedulerSupport.IO
+import io.reactivex.rxjava3.annotations.SchedulerSupport
+import io.reactivex.rxjava3.annotations.SchedulerSupport.IO
 import javax.inject.Inject
 import javax.inject.Singleton
 

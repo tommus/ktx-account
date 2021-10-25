@@ -2,8 +2,8 @@ package co.windly.ktxaccount.runtime.scheme
 
 import android.accounts.Account
 import android.content.Context
-import io.reactivex.Completable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 /**
  * This scheme assumes ONE and ONLY account for given authenticator will ever exist.
@@ -76,9 +76,9 @@ abstract class SingleAccountScheme(context: Context) : BaseAccountScheme(context
           .getAccountsByType(provideAuthenticator())
           .forEach {
 
-          @Suppress("DEPRECATION")
-          manager.removeAccount(it, null, null)
-        }
+            @Suppress("DEPRECATION")
+            manager.removeAccount(it, null, null)
+          }
       }
       .subscribeOn(Schedulers.io())
 
