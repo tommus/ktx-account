@@ -6,9 +6,9 @@ import android.util.Log
 import co.windly.ktxaccount.sample.kotlindagger.R.layout
 import co.windly.ktxaccount.sample.kotlindagger.utility.manager.AccountUtilityManager
 import dagger.android.AndroidInjection
-import io.reactivex.Completable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import javax.inject.Inject
 
 class MainActivity : Activity() {

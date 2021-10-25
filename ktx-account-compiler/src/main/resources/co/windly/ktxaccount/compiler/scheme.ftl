@@ -8,15 +8,15 @@ import co.windly.ktxaccount.runtime.scheme.MultipleAccountScheme
 import co.windly.ktxaccount.runtime.scheme.SingleAccountScheme
 </#if>
 <#list descriptorList as descriptor>
-import ${package}.AccountDefinitionConstants.Companion.DEFAULT_${descriptor.fieldNameUpperCase}
-import ${package}.AccountDefinitionConstants.Companion.KEY_${descriptor.fieldNameUpperCase}
+import ${package}.${constantsClassName}.Companion.DEFAULT_${descriptor.fieldNameUpperCase}
+import ${package}.${constantsClassName}.Companion.KEY_${descriptor.fieldNameUpperCase}
 </#list>
-import io.reactivex.BackpressureStrategy.LATEST
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.BackpressureStrategy.LATEST
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 
 <#if comment??>
 /**
