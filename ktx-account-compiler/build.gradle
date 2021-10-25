@@ -1,37 +1,12 @@
-//region Startup Plugins
-
-apply plugin: "kotlin"
-
-//endregion
-
-//region Dependencies
-
-dependencies {
-
-  //region Application Modules
-
-  implementation project(":ktx-account-annotations")
-
-  //endregion
-
-  //region Kotlin
-
-  implementation deps.kotlin.stdlib_jdk8
-
-  //endregion
-
-  //region Miscellaneous
-
-  implementation deps.template.freemarker
-  implementation deps.misc.commons_text
-
-  //endregion
+plugins {
+  id 'kotlin'
 }
 
-//endregion
+dependencies {
+  implementation project(':ktx-account-annotations')
+  implementation deps.kotlin.stdlib_jdk8
+  implementation deps.template.freemarker
+  implementation deps.misc.commons_text
+}
 
-//region Publication
-
-apply from: rootProject.file("gradle/gradle-mvn-push.gradle")
-
-//endregion
+apply from: rootProject.file('scripts/publish.gradle')

@@ -1,44 +1,23 @@
-//region Startup Plugins
-
-apply plugin: "com.android.library"
-
-//endregion
-
-//region Android
+plugins {
+  id 'com.android.library'
+}
 
 android {
 
-  //region Compile Options
-
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
   compileSdkVersion deps.build_versions.compile_sdk
-
-  //endregion
-
-  //region Default Config
 
   defaultConfig {
     minSdkVersion deps.build_versions.min_sdk
     targetSdkVersion deps.build_versions.target_sdk
   }
-
-  //endregion
 }
-
-//region Dependencies
 
 dependencies {
-
-  //region Library Modules
-
-  api project(":ktx-account-runtime")
-
-  //endregion
+  api project(':ktx-account-runtime')
 }
 
-//endregion
-
-//region Publication
-
-apply from: rootProject.file("gradle/gradle-mvn-push.gradle")
-
-//endregion
+apply from: rootProject.file('scripts/publish.gradle')

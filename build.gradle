@@ -1,19 +1,16 @@
-//region Build Script
-
 buildscript {
+
   repositories {
-    apply from: "versions.gradle"
+    apply from: 'versions.gradle'
     addRepos(repositories)
   }
+
   dependencies {
     classpath deps.build.android_gradle_plugin
+    classpath deps.build.dokka_gradle_plugin
     classpath deps.build.kotlin_gradle_plugin
   }
 }
-
-//endregion
-
-//region All Projects
 
 allprojects {
   repositories {
@@ -21,13 +18,7 @@ allprojects {
   }
 }
 
-//endregion
-
-//region Sub Projects
-
 subprojects { project ->
   group = GROUP
   version = VERSION_NAME
 }
-
-//endregion
